@@ -1,0 +1,10 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    collectd (0.0.15)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  collectd
