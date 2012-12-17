@@ -81,10 +81,7 @@ def collect_twitter(project_name)
     $stderr.puts "[Twitter] sleeping " + username + " for " + error.rate_limit.reset_in.to_f.to_s
     # NOTE: Your process could go to sleep for up to 15 minutes but if you
     # retry any sooner, it will almost certainly fail with the same exception.
-    EM.add_timer(error.rate_limit.reset_in.to_f) {
-      puts "Times up, grabbing twitter"
-      collect_twitter(project_name)
-    }
+    EM.add_timer(error.rate_limit.reset_in.to_f) { collect_twitter(project_name) }
   end
 
 end
