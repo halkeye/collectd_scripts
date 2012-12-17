@@ -56,7 +56,6 @@ end
 
 def collect_twitter(project_name)
   username = @config["projects"][project_name]["twitter"]
-  $stderr.puts "[Twitter] Looking up " + username
 
   client = @twitter_clients[username]
   if (!client) then
