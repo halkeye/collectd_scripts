@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-#!/usr/bin/env ruby
 #
 # Written by Gavin Mogan (gavin@kodekoan.com)
 
