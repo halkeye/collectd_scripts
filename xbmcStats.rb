@@ -28,7 +28,13 @@ end
 
 client.query("use xbmc_video" + databaseVer.to_s);
 while (1) do
-  results = client.query("SELECT SUM(totalCount) AS collected, SUM(watchedCount) AS watched, SUM(totalCount=watchedCount) AS completed, SUM(IF(watchedcount>0, totalCount, 0)) as inProgressTotalCount FROM tvshowview");
+  results = client.query("SELECT 
+                         SUM(totalCount) AS collectedEpisodes, 
+                         SUM(watchedCount) AS watchedEpisodes, 
+                         SUM(IF(watchedCount>0 AND watchedCount<totalCount, 1, 0)) as inProgressShows, 
+                         SUM(IF(watchedCount>0 AND watchedCount=totalCount, 1, 0)) as completedShows,
+                         COUNT(1) as totalShows
+                         FROM tvshowview");
   results.each do |row|
     row.each do |key,value|
       puts "PUTVAL \"#{hostname}/xbmc-tvshows/gauge-#{key}\" interval=#{interval.to_i} N:#{value.to_i.to_s}\n";
