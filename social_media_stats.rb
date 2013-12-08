@@ -22,21 +22,18 @@ STDOUT.sync = true
 @twitter_clients = {}
 TWITTER_MAX_ATTEMPTS_PER_USER = 3
 
-Twitter.configure do |config|
-  config.consumer_key = @config['config']['twitter']['consumer_key'],
-  config.consumer_secret = @config['config']['twitter']['consumer_secret'] 
-end
-
 def output_gauge(project_name, type, key, value)
   puts "PUTVAL \"#{@hostname}/#{project_name}-#{type}/gauge-#{key}\" interval=#{@interval.to_i} N:#{value.to_i}\n";
 end
 
 def get_twitter_oauth(username)
+  @config['config']['twitter']['users'] = {} unless @config['config']['twitter'].has_key? "users"
+
   c = OAuth::Consumer.new(
     @config['config']['twitter']['consumer_key'],
     @config['config']['twitter']['consumer_secret'],
     {
-      :site => "http://api.twitter.com",
+      :site => "https://api.twitter.com",
       :scheme => :header
     }
   )
@@ -44,8 +41,8 @@ def get_twitter_oauth(username)
   $stderr.puts "\nPlease goto https://api.twitter.com/oauth/authorize?oauth_token=#{request_token.token} to register this app\n"
   $stderr.puts
   $stderr.puts "Enter PIN: "
-  pin = gets.strip
-  at = request_token.get_access_token(:pin => pin)
+  pin = (gets.chomp).to_i
+  at = request_token.get_access_token(:oauth_verifier => pin)
 
   @config['config']['twitter']['users'][username] = {}
   @config['config']['twitter']['users'][username]['oauth_token'] = at.params[:oauth_token]
@@ -60,22 +57,24 @@ def collect_twitter(project_name)
   client = @twitter_clients[username]
   if (!client) then
 
-    if (!@config['config']['twitter']['users'][username]) then
+    begin
+      oauth_data = @config['config']['twitter']['users'][username]
+    rescue
       get_twitter_oauth(username)
     end
 
-    client = Twitter::Client.new(
-      :consumer_key => @config['config']['twitter']['consumer_key'],
-      :consumer_secret => @config['config']['twitter']['consumer_secret'],
-      :oauth_token => @config['config']['twitter']['users'][username]['oauth_token'],
-      :oauth_token_secret => @config['config']['twitter']['users'][username]['oauth_token_secret']
-    )
+    client = Twitter::REST::Client.new do |config|
+      config.consumer_key        = @config['config']['twitter']['consumer_key'].to_s
+      config.consumer_secret     = @config['config']['twitter']['consumer_secret'].to_s
+      config.access_token        = oauth_data['oauth_token'].to_s
+      config.access_token_secret = oauth_data['oauth_token_secret'].to_s
+    end
     @twitter_clients[username] = client
   end
 
   begin
-    followers = client.followers(username)
-    output_gauge(project_name, "twitter", "followers", followers.all.count)
+    user = client.user(username)
+    output_gauge(project_name, "twitter", "followers", user.followers_count)
     EM.add_timer(@interval) {collect_twitter(project_name) };
   rescue Twitter::Error::TooManyRequests => error
     $stderr.puts "[Twitter] sleeping " + username + " for " + error.rate_limit.reset_in.to_f.to_s
@@ -97,13 +96,13 @@ def collect_facebook(project_name)
 end
 
 EM.run do
-  @config["projects"].keys.each do |key|
-    @config["projects"][key].keys.each do |type|
+  @config["projects"].keys.each do |project|
+    @config["projects"][project].keys.each do |type|
       if (type == "facebook") then
-        collect_facebook(key)
+        collect_facebook(project)
       end
       if (type == "twitter") then
-        collect_twitter(key)
+        collect_twitter(project)
       end
     end
   end
