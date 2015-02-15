@@ -5,10 +5,27 @@ require 'inifile'
 require 'simple-graphite'
 require "net/http"
 require "uri"
+require 'optparse'
 
-$INTERVAL = 10;
+options = {
+  :interval => 10,
+  :config => File.dirname(__FILE__) + '/config.ini',
+  :debug => false
+}
+OptionParser.new do |opts|
+  opts.banner = "Usage: plex_graphite.rb [options] configkey"
+  opts.on("-c", "--config FILE", "Filename of config file") do |config|
+    options[:config] = config
+  end
+  opts.on("-i", "--interval INTERVAL", "sleep time") do |interval|
+    options[:interval] = interval.to_i
+  end
+  opts.on("-d", "--[no-]debug", "Debug") do |d|
+    options[:debug] = d
+  end
+end.parse!
 
-ini = IniFile.load(ARGV[1] || 'config.ini')
+ini = IniFile.load(options[:config])
 g = Graphite.new({:host => ini['graphite']['host'], :port =>  ini['graphite']['port'].to_i, :type => :udp})
 # config = ini["plex_graphite.rb.rb:#{ARGV[0]}"]
 
@@ -29,5 +46,5 @@ while true do
       graphite.puts "plex.user_activity.#{user} #{users[user]} #{g.time_now}"
     end
   end
-  sleep $INTERVAL
+  sleep options[:interval]
 end

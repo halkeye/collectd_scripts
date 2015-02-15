@@ -29,7 +29,6 @@ GEM
     minitest (4.7.5)
     multi_json (1.8.2)
     multipart-post (1.2.0)
-    mysql2 (0.3.14)
     nokogiri (1.6.5)
       mini_portile (~> 0.6.0)
     oauth (0.4.7)
@@ -64,7 +63,6 @@ DEPENDENCIES
   eventmachine (~> 1.0.3)
   inifile (~> 3.0.0)
   json
-  mysql2 (~> 0.3.14)
   nokogiri
   oauth
   rubyipmi
