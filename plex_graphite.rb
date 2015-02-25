@@ -43,7 +43,9 @@ while true do
       users[username] = users[username] + 1
     end
     users.keys.each do |user|
-      graphite.puts "plex.user_activity.#{user} #{users[user]} #{g.time_now}"
+      str = "plex.user_activity.#{user} #{users[user]} #{g.time_now}"
+      graphite.puts str
+      puts str if options[:debug]
     end
   end
   sleep options[:interval]
