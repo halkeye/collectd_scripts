@@ -1,6 +1,5 @@
 GEM
   remote: https://rubygems.org/
-  remote: http://gemcutter.org/
   specs:
     activesupport (4.0.2)
       i18n (~> 0.6, >= 0.6.4)
@@ -12,12 +11,16 @@ GEM
     atomic (1.1.14)
     buftok (0.2.0)
     descendants_tracker (0.0.3)
+    domain_name (0.5.24)
+      unf (>= 0.0.5, < 1.0.0)
     equalizer (0.0.8)
     eventmachine (1.0.3)
     faraday (0.8.8)
       multipart-post (~> 1.2.0)
-    http (0.5.0)
+    http (0.5.1)
       http_parser.rb
+    http-cookie (1.0.2)
+      domain_name (~> 0.5)
     http_parser.rb (0.5.3)
     i18n (0.6.9)
     inifile (3.0.0)
@@ -33,7 +36,8 @@ GEM
     nokogiri (1.6.5)
       mini_portile (~> 0.6.0)
     oauth (0.4.7)
-    rest-client (1.7.3)
+    rest-client (1.8.0)
+      http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
     rubyipmi (0.7.0)
@@ -58,6 +62,9 @@ GEM
       memoizable (~> 0.2.0)
       simple_oauth (~> 0.2.0)
     tzinfo (0.3.38)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.1)
 
 PLATFORMS
   ruby

@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-source 'http://gemcutter.org'
+#source 'http://gemcutter.org'
 gem "json"
 gem "twitter"
 gem "oauth"
