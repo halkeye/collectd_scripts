@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 #source 'http://gemcutter.org'
 gem "json"
-gem "twitter"
-gem "oauth"
+gem 'twitter', '~> 5.14.0'
+gem 'oauth', '~> 0.4.7'
 gem "nokogiri"
 
 #gem 'mysql2', '~> 0.3.14'
