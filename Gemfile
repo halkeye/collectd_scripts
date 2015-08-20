@@ -13,3 +13,7 @@ gem 'rubyipmi'
 gem 'inifile', '~> 3.0.0'
 gem 'simple-graphite'
 gem 'snmp'
+
+#gem "json"
+#gem 'simple-graphite'
+gem 'linkedin'
